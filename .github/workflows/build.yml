@@ -1,3 +1,4 @@
+---
 name: build
 on: [pull_request, push]
 
@@ -14,5 +15,7 @@ jobs:
              --build-arg MUJOCO_KEY=$MUJOCO_KEY \
              --build-arg PYTHON_VERSION=${{ matrix.python-version }} \
              --tag gym-docker .
-      - name: Run tests
-        run: docker run gym-docker pytest --import-mode=append
+      - name: Run main tests
+        run: docker run gym-docker pytest --import-mode=append -m "not require_forked"
+      - name: Run tests requiring `--forked` option
+        run: docker run gym-docker pytest --forked --import-mode=append -m require_forked
